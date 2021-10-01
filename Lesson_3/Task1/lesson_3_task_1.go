@@ -58,7 +58,7 @@ func inputNumbers(operation string) (a, b float64, err error) {
 	case OperationSQRT:
 		fmt.Print("Введите число: ")
 		if _, err = fmt.Scanln(&a); err != nil {
-			return 0, 0, err
+			return
 		}
 	case OperationPlus:
 		fallthrough
@@ -67,22 +67,22 @@ func inputNumbers(operation string) (a, b float64, err error) {
 	case OperationMultiply:
 		fmt.Print("Введите два числа через пробел: ")
 		if _, err = fmt.Scanf("%f %f", &a, &b); err != nil {
-			return 0, 0, err
+			return
 		}
 	case OperationDivision:
 		fmt.Print("Введите два числа через пробел: ")
 		if _, err = fmt.Scanf("%f %f", &a, &b); err != nil {
-			return 0, 0, err
+			return
 		}
 
 		if b == 0 {
 			err = fmt.Errorf("Деление на 0 запрещено")
-			return 0, 0, err
+			return
 		}
 	default:
 		err = fmt.Errorf("Выбрана неправильная операция")
-		return 0, 0, err
+		return
 	}
 
-	return a, b, nil
+	return
 }
