@@ -68,12 +68,7 @@ func inputNumbers(operation string) (a, b float64, err error) {
 		if _, err = fmt.Scanln(&a); err != nil {
 			return
 		}
-	case OperationPlus, OperationMinus, OperationMultiply:
-		fmt.Print("Введите два числа через пробел: ")
-		if _, err = fmt.Scanf("%f %f", &a, &b); err != nil {
-			return
-		}
-	case OperationDivision:
+	case OperationPlus, OperationMinus, OperationMultiply, OperationDivision:
 		fmt.Print("Введите два числа через пробел: ")
 		if _, err = fmt.Scanf("%f %f", &a, &b); err != nil {
 			return
