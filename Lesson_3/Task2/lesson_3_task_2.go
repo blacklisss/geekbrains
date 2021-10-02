@@ -16,7 +16,6 @@ func main() {
 	}
 
 	numbers := make([]int, N+1)
-	seive := make([]bool, N+1)
 
 	for i := 0; i <= N; i++ {
 		numbers[i] = i
@@ -25,27 +24,17 @@ func main() {
 	limit := int(math.Sqrt(float64(N))) + 1
 
 	for i := 2; i < limit; i++ {
-		if !seive[i] {
+		if numbers[i] != 0 {
 			for j := i * i; j <= N; j += i {
-				seive[j] = true
+				numbers[j] = 0
 			}
 		}
 	}
 
-	count := 0
 	for i := 2; i <= N; i++ {
-		if !seive[i] {
-			count++
+		if numbers[i] != 0 {
+			fmt.Println(numbers[i])
 		}
 	}
 
-	fmt.Printf("Простых чисел от 0 до %d включительно = %d\n", N, count)
-	fmt.Print("Простые числа: ")
-
-	for i := 2; i <= N; i++ {
-		if !seive[i] {
-			fmt.Print(numbers[i], " ")
-		}
-	}
-	fmt.Print("\n\r")
 }

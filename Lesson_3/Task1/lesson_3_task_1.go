@@ -35,20 +35,28 @@ func main() {
 
 	if a, b, err = inputNumbers(operation); err != nil {
 		fmt.Println(err.Error())
-		os.Exit(1)
 	}
 
 	switch operation {
 	case OperationSQRT:
-		fmt.Printf("Результат операции %s(%.2f) = %.2f\n\r", operation, a, math.Sqrt(a))
+		result := math.Sqrt(a)
+		fmt.Printf("Результат операции %s(%.2f) = %.2f\n\r", operation, a, result)
 	case OperationPlus:
-		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, a+b)
+		result := a + b
+		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, result)
 	case OperationMinus:
-		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, a-b)
+		result := a - b
+		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, result)
 	case OperationMultiply:
-		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, a*b)
+		result := a * b
+		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, result)
 	case OperationDivision:
-		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, a/b)
+		if b == 0 {
+			fmt.Println("Деление на 0 запрещено")
+			os.Exit(1)
+		}
+		result := a / b
+		fmt.Printf("Результат операции %.2f %s %.2f = %.2f\n\n", a, operation, b, result)
 	}
 }
 
@@ -60,11 +68,7 @@ func inputNumbers(operation string) (a, b float64, err error) {
 		if _, err = fmt.Scanln(&a); err != nil {
 			return
 		}
-	case OperationPlus:
-		fallthrough
-	case OperationMinus:
-		fallthrough
-	case OperationMultiply:
+	case OperationPlus, OperationMinus, OperationMultiply:
 		fmt.Print("Введите два числа через пробел: ")
 		if _, err = fmt.Scanf("%f %f", &a, &b); err != nil {
 			return
@@ -72,11 +76,6 @@ func inputNumbers(operation string) (a, b float64, err error) {
 	case OperationDivision:
 		fmt.Print("Введите два числа через пробел: ")
 		if _, err = fmt.Scanf("%f %f", &a, &b); err != nil {
-			return
-		}
-
-		if b == 0 {
-			err = fmt.Errorf("Деление на 0 запрещено")
 			return
 		}
 	default:
