@@ -1,28 +1,37 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	var n, tmp int
 	var numbers []int
 
-	fmt.Print("Введите количество чисел: ")
-	if _, err := fmt.Scanln(&n); err != nil {
-		fmt.Println(err.Error())
+	myscanner := bufio.NewScanner(os.Stdin)
+	fmt.Printf("Введите числа через запятую или пробел: ")
+	if ok := myscanner.Scan(); !ok {
+		fmt.Println("Возникла ошибка ввода")
 		os.Exit(1)
 	}
 
-	for i := 1; i <= n; i++ {
-		fmt.Printf("Введите %d число: ", i)
-		if _, err := fmt.Scanln(&tmp); err != nil {
-			fmt.Println("Необходимо вводить числа")
-			os.Exit(1)
-		}
+	line := myscanner.Text()
 
-		numbers = append(numbers, tmp)
+	splitFunc := func(r rune) bool {
+		return strings.ContainsRune(", ", r)
+	}
+
+	tmp := strings.FieldsFunc(line, splitFunc)
+	for _, num := range tmp {
+		num = strings.TrimSpace(num)
+		n, err := strconv.Atoi(num)
+
+		if err == nil {
+			numbers = append(numbers, n)
+		}
 	}
 
 	fmt.Println("----------------------------")
