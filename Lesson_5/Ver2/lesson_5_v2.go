@@ -8,14 +8,29 @@ import (
 
 type myMap map[int]int
 
-func fib(n int, fn myMap) int {
+var fn = make(myMap)
+var c1, c2 uint //c1 - счетчик вызова функции c2 - счетчик вызова кеша
+
+func fib(n int, withCache bool) int {
+	var res int
+	c1 += 1
 	if n <= 1 {
-		fn[n] = n
-	} else if fn[n] == 0 {
-		fn[n] = fib(n-2, fn) + fib(n-1, fn)
+		res = n
+	} else {
+		if withCache {
+			if fn[n] != 0 {
+				c2 += 1
+				return fn[n]
+			}
+		}
+		res = fib(n-2, withCache) + fib(n-1, withCache)
 	}
 
-	return fn[n]
+	if withCache {
+		fn[n] = res
+	}
+
+	return res
 }
 
 func fib2(n int, fn myMap) int {
@@ -30,7 +45,6 @@ func fib2(n int, fn myMap) int {
 
 func main() {
 	var n, x int
-	fn := make(myMap)
 
 	start := time.Now()
 
@@ -41,12 +55,14 @@ func main() {
 	}
 
 	if n >= 0 {
-		x = fib(n, fn)
+		x = fib(n, false)
 	} else {
 		x = fib2(n, fn)
 	}
 
 	fmt.Println("Число Фибоначи:", x)
+	fmt.Println("Вызов функций:", c1)
+	fmt.Println("Вызов кеша:", c2)
 
 	stop := time.Now()
 	fmt.Println("[INFO] Время выполнения:", stop.Sub(start))
