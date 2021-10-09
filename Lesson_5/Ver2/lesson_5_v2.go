@@ -9,22 +9,27 @@ import (
 type myMap map[int]int
 
 func fib(n int, fn myMap) int {
-	for i := 0; i <= n; i++ {
-		var f int
-		if i == 0 {
-			f = 0
-		} else if i == 1 {
-			f = 1
-		} else {
-			f = fn[i-1] + fn[i-2]
-		}
-		fn[i] = f
+	if n <= 1 {
+		fn[n] = n
+	} else if fn[n] == 0 {
+		fn[n] = fib(n-2, fn) + fib(n-1, fn)
 	}
+
+	return fn[n]
+}
+
+func fib2(n int, fn myMap) int {
+	if n >= -1 {
+		fn[n] = n
+	} else if fn[n] == 0 {
+		fn[n] = fib2(n+2, fn) + fib2(n+1, fn)
+	}
+
 	return fn[n]
 }
 
 func main() {
-	var n int
+	var n, x int
 	fn := make(myMap)
 
 	start := time.Now()
@@ -35,7 +40,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	x := fib(n, fn)
+	if n >= 0 {
+		x = fib(n, fn)
+	} else {
+		x = fib2(n, fn)
+	}
+
 	fmt.Println("Число Фибоначи:", x)
 
 	stop := time.Now()

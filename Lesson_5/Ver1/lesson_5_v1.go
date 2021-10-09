@@ -7,7 +7,6 @@ import (
 )
 
 func fib(n int) int {
-
 	if n <= 1 {
 		return n
 	}
@@ -15,8 +14,16 @@ func fib(n int) int {
 	return fib(n-2) + fib(n-1)
 }
 
+func fib2(n int) int {
+	if n >= -1 {
+		return n
+	}
+
+	return fib2(n+2) + fib2(n+1)
+}
+
 func main() {
-	var n int
+	var n, x int
 
 	start := time.Now()
 
@@ -26,7 +33,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	x := fib(n)
+	if n >= 0 {
+		x = fib(n)
+	} else {
+		x = fib2(n)
+	}
+
 	fmt.Println("Число Фибоначи:", x)
 
 	stop := time.Now()
