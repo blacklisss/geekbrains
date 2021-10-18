@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"geekbrains/go/Lesson_7/mycache"
+	"geekbrains/go/Lesson_8/configuration"
+	"geekbrains/go/Lesson_8/mycache"
 	"os"
 	"time"
 )
@@ -51,6 +52,13 @@ func (fs *FibStruct) Calculate(n int64, cache Cacher) int64 {
 
 func main() {
 	start := time.Now()
+	var config *configuration.Config
+	var err error
+
+	if config, err = configuration.Load("configuration/configuration.env"); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	fb := &FibStruct{}
 
@@ -61,15 +69,17 @@ func main() {
 	}
 
 	mapCache := &mycache.MapCacheInt{
-		UseCache: true,
-		Cache:    make(map[int64]int64),
+		Cache: make(map[int64]int64),
 	}
+
+	mapCache.SetUseCache(config.UseCache)
 
 	_ = fb.Calculate(fb.number, mapCache)
 
 	fmt.Println("Число Фибоначи:", fb.result)
 	fmt.Println("Вызов функций:", c1)
 	fmt.Println("Вызов кеша:", c2)
+	fmt.Println("Вывод поля конфигурации [URL]:", config.Url)
 
 	stop := time.Now()
 	fmt.Println("[INFO] Время выполнения:", stop.Sub(start))

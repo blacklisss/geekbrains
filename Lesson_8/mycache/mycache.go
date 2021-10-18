@@ -9,7 +9,7 @@ type IntCacher interface {
 }
 
 type MapCacheInt struct {
-	UseCache bool
+	useCache bool
 	Cache    map[int64]int64
 }
 
@@ -27,5 +27,9 @@ func (mc *MapCacheInt) GetFromCache(key int64) (dat interface{}, err error) {
 }
 
 func (mc *MapCacheInt) IsUseCache() bool {
-	return mc.UseCache
+	return mc.useCache
+}
+
+func (mc *MapCacheInt) SetUseCache(useCache bool) {
+	mc.useCache = useCache
 }
