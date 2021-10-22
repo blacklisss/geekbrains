@@ -1,4 +1,4 @@
-module geekbrains/go/Lesson_8
+module geekbrains/go/Lesson_10
 
 go 1.17
 

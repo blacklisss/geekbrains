@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"geekbrains/go/Lesson_8/configuration"
-	"geekbrains/go/Lesson_8/fibonacci"
-	"geekbrains/go/Lesson_8/mycache"
+	"geekbrains/go/Lesson_10/configuration"
+	"geekbrains/go/Lesson_10/fibonacci"
+	"geekbrains/go/Lesson_10/mycache"
 	"os"
 	"time"
 )

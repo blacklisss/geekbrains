@@ -1,6 +1,6 @@
 package fibonacci
 
-import "geekbrains/go/Lesson_8/mycache"
+import "geekbrains/go/Lesson_10/mycache"
 
 type FibStruct struct {
 	Number int64
