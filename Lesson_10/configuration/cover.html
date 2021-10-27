@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>configuration: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">geekbrains/go/Lesson_10/configuration/configuration.go (73.7%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package configuration
+
+import (
+        "encoding/json"
+        "fmt"
+        "github.com/joho/godotenv"
+        "github.com/namsral/flag"
+        "gopkg.in/yaml.v2"
+        "net/url"
+        "os"
+        "path/filepath"
+        "strconv"
+)
+
+type Config struct {
+        UseCache bool   `json:"use_cache" yaml:"use_cache"`
+        Url      string `json:"url" yaml:"url"`
+}
+
+func Load(configFile string) (config *Config, err error) <span class="cov8" title="1">{
+        config = NewConfig()
+        switch filepath.Ext(configFile) </span>{
+        case ".json":<span class="cov8" title="1">
+                if err = LoadJsonConfig(&amp;configFile, config); err != nil </span><span class="cov8" title="1">{
+                        return
+                }</span>
+        case ".yaml":<span class="cov8" title="1">
+                if err = LoadYamlConfig(&amp;configFile, config); err != nil </span><span class="cov8" title="1">{
+                        return
+                }</span>
+        case ".env":<span class="cov8" title="1">
+                if err = LoadEnvConfig(&amp;configFile, config); err != nil </span><span class="cov8" title="1">{
+                        return
+                }</span>
+        default:<span class="cov8" title="1">
+                return nil, fmt.Errorf("invalid format of configuration file")</span>
+        }
+
+        <span class="cov8" title="1">if len(os.Args) &gt; 1 &amp;&amp; filepath.Ext(os.Args[0]) != ".test" </span><span class="cov0" title="0">{ // тут не нашел лучшего решения исключить тесты из вызова. Буду благодарен, если подскажете варианты
+                if err = LoadFromArgs(config); err != nil </span><span class="cov0" title="0">{
+                        return
+                }</span>
+        }
+
+        <span class="cov8" title="1">return</span>
+}
+
+func LoadJsonConfig(configFile *string, config *Config) error <span class="cov8" title="1">{
+        contents, err := os.ReadFile(*configFile)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Printf("Error read config file: %s\n", err)
+                os.Exit(1)
+        }</span>
+
+        <span class="cov8" title="1">err = json.Unmarshal(contents, config)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("invalid json: %s\n", err)
+        }</span>
+
+        <span class="cov8" title="1">if !validateUrl(&amp;config.Url) </span><span class="cov8" title="1">{
+                return fmt.Errorf("необходимо ввести валидный Url")
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func LoadYamlConfig(configFile *string, config *Config) error <span class="cov8" title="1">{
+        contents, err := os.ReadFile(*configFile)
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Printf("Error read config file: %s\n", err)
+                os.Exit(1)
+        }</span>
+
+        <span class="cov8" title="1">err = yaml.Unmarshal(contents, config)
+        if err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("invalid yaml: %s\n", err)
+        }</span>
+
+        <span class="cov8" title="1">if !validateUrl(&amp;config.Url) </span><span class="cov8" title="1">{
+                return fmt.Errorf("необходимо ввести валидный Url")
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func LoadEnvConfig(configFile *string, config *Config) error <span class="cov8" title="1">{
+        if err := godotenv.Load(*configFile); err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("произошла ошибка парсинга файла окружения")
+        }</span>
+
+        <span class="cov8" title="1">useCacheTmp := os.Getenv("USE_CACHE")
+        useCacheBool, err := strconv.ParseBool(useCacheTmp)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed convert to bool useCache variable")
+        }</span>
+        <span class="cov8" title="1">config.UseCache = useCacheBool
+
+        config.Url = os.Getenv("EXTERNAL_URL")
+        if !validateUrl(&amp;config.Url) </span><span class="cov0" title="0">{
+                return fmt.Errorf("необходимо ввести валидный Url")
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func LoadFromArgs(config *Config) error <span class="cov0" title="0">{
+        var (
+                useCache    = flag.Bool("use-cache", true, "Использовать кэш (true/false)?")
+                externalUrl = flag.String("external-url", "", "Внешний URL в полном формате")
+        )
+
+        flag.Parse()
+
+        config.UseCache = *useCache
+        config.Url = *externalUrl
+
+        if !validateUrl(&amp;config.Url) </span><span class="cov0" title="0">{
+                return fmt.Errorf("необходимо ввести валидный Url")
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+func isUrl(str string) bool <span class="cov8" title="1">{
+        u, err := url.Parse(str)
+        return err == nil &amp;&amp; u.Scheme != "" &amp;&amp; u.Host != ""
+}</span>
+
+func validateUrl(url *string) bool <span class="cov8" title="1">{
+        if *url != "" &amp;&amp; !isUrl(*url) </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">return true</span>
+}
+
+func NewConfig() *Config <span class="cov8" title="1">{
+        return &amp;Config{}
+}</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
